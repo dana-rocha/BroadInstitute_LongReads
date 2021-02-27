@@ -1,0 +1,18 @@
+# Files to ignore
+
+*.idea/
+*.idea
+*.txt
+*.txt.gz
+*.iml
+*.xml
+
+
+test_test.py
+test_plot.py
+calc_kmer.py
+counting.py
+reads.txt
+reads.txt.gz
+
+
