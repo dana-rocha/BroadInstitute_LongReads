@@ -9,7 +9,8 @@ import argparse
 #import gzip
 from collections import Counter
 import matplotlib.pyplot as plt
-import numpy as np
+#import numpy as np
+#import csv
 
 def main(infile):
 
@@ -30,7 +31,8 @@ def main(infile):
 
     #print(kmer_occurs)
 
-    #generate_plot(kmer_occurs)
+    generate_plot(kmer_occurs)
+
 
 def check_size(size_input):
     """
@@ -79,9 +81,7 @@ def calc_kmer(list_of_seqs, ksize):
 
 def count_occurrence(kmer_container):
 
-    #occur = dict(Counter(kmer_container.values()))
-
-    occur = dict(Counter(kmer_container))
+    occur = dict(Counter(kmer_container.values()))
 
     return occur
 
@@ -91,7 +91,7 @@ def generate_plot(occur_dict):
     x_vals = occur_dict.keys()
     y_vals = occur_dict.values()
 
-    plt.plot(x_vals, y_vals, label="K-mer Occurrences")
+    plt.scatter(x_vals, y_vals, marker='o')
 
     plt.ylabel("Count")
     plt.xlabel("Coverage")
