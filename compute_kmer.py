@@ -9,8 +9,9 @@ import argparse
 #import gzip
 from collections import Counter
 import matplotlib.pyplot as plt
-#import numpy as np
-#import csv
+import numpy as np
+import pandas as pd
+from scipy.signal import find_peaks
 
 def main(infile):
 
@@ -88,14 +89,45 @@ def count_occurrence(kmer_container):
 
 def generate_plot(occur_dict):
 
-    x_vals = occur_dict.keys()
-    y_vals = occur_dict.values()
+    #x_vals = occur_dict.keys()
+    #y_vals = occur_dict.values()
 
-    plt.scatter(x_vals, y_vals, marker='o')
+    #plt.scatter(x_vals, y_vals, marker='o')
 
-    plt.ylabel("Count")
-    plt.xlabel("Coverage")
+    #plt.ylabel("Count")
+    #plt.xlabel("Coverage")
 
+    #plt.show()
+
+    df = pd.DataFrame(list(occur_dict.items()), columns=['Coverage', 'Count'])
+    df = df.sort_values('Coverage', ascending=True)
+
+    x_vals = df["Coverage"].to_numpy()
+    y_vals = df["Count"].to_numpy()
+
+    # Find peaks (maximas)
+    peaks = find_peaks(y_vals, height=2, threshold=1, distance=1)
+    height = peaks[1]['peak_heights']  # List containing the height of the peaks
+    peak_pos = x_vals[peaks[0]]  # List containing the positions of the peaks
+
+    # Find the minima
+    y2 = y_vals * -1
+    minima = find_peaks(y2)
+    min_pos = x_vals[minima[0]]  # list containing the positions of the minima
+    min_height = y2[minima[0]]  # list containing the height of the mirrored minima
+    real_min_height = min_height * -1
+
+    # Plotting the function
+    fig = plt.figure()
+    ax = fig.subplots()
+    ax.plot(x_vals, y_vals)
+
+    #ax.scatter(peak_pos, height, color='r', s=15, marker='D', label='Maxima')
+
+    # Plotting the minima
+    ax.scatter(min_pos, real_min_height, color='g', s=15, marker='X', label='Minima')
+    ax.legend()
+    ax.grid()
     plt.show()
 
 
