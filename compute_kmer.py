@@ -22,15 +22,9 @@ def main(infile):
 
     cleaned_seq = clean_seq(fh_in)
 
-    #print(checked, cleaned_seq[0:2])
-
     kmers = calc_kmer(cleaned_seq, checked)
 
-    #print(kmers)
-
     kmer_occurs = count_occurrence(kmers)
-
-    #print(kmer_occurs)
 
     generate_plot(kmer_occurs)
 
@@ -89,16 +83,6 @@ def count_occurrence(kmer_container):
 
 def generate_plot(occur_dict):
 
-    #x_vals = occur_dict.keys()
-    #y_vals = occur_dict.values()
-
-    #plt.scatter(x_vals, y_vals, marker='o')
-
-    #plt.ylabel("Count")
-    #plt.xlabel("Coverage")
-
-    #plt.show()
-
     df = pd.DataFrame(list(occur_dict.items()), columns=['Coverage', 'Count'])
     df = df.sort_values('Coverage', ascending=True)
 
@@ -110,21 +94,22 @@ def generate_plot(occur_dict):
     height = peaks[1]['peak_heights']  # List containing the height of the peaks
     peak_pos = x_vals[peaks[0]]  # List containing the positions of the peaks
 
-    # Find the minima
-    y2 = y_vals * -1
+    # Find the minimas
+    y2 = y_vals * -1 # Mirror the y values over the horizontal axis because this module only finds peaks
     minima = find_peaks(y2)
-    min_pos = x_vals[minima[0]]  # list containing the positions of the minima
-    min_height = y2[minima[0]]  # list containing the height of the mirrored minima
-    real_min_height = min_height * -1
+    min_pos = x_vals[minima[0]]  # list containing the positions of the minimas
+    min_height = y2[minima[0]]  # list containing the height of the mirrored minimai
+    real_min_height = min_height * -1 # Need to flip back over the horizontal axis to plot
 
     # Plotting the function
     fig = plt.figure()
     ax = fig.subplots()
     ax.plot(x_vals, y_vals)
 
-    #ax.scatter(peak_pos, height, color='r', s=15, marker='D', label='Maxima')
+    # Plotting the local maximas
+    # ax.scatter(peak_pos, height, color='r', s=15, marker='D', label='Maxima')
 
-    # Plotting the minima
+    # Plotting the local minimas
     ax.scatter(min_pos, real_min_height, color='g', s=15, marker='X', label='Minima')
     ax.legend()
     ax.grid()
