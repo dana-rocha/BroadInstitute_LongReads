@@ -101,10 +101,16 @@ def generate_plot(occur_dict):
     min_height = y2[minima[0]]  # list containing the height of the mirrored minimai
     real_min_height = min_height * -1 # Need to flip back over the horizontal axis to plot
 
+    # X and Y Values of the minima
+    minimas_df = pd.DataFrame({'Coverage': min_pos, 'Count': real_min_height})
+
     # Plotting the function
     fig = plt.figure()
     ax = fig.subplots()
     ax.plot(x_vals, y_vals)
+
+    # Plotting the threshold
+    ax.axvline(x=minimas_df.loc[0][0], color='r', label='Threshold', linestyle='--')
 
     # Plotting the local maximas
     # ax.scatter(peak_pos, height, color='r', s=15, marker='D', label='Maxima')
@@ -113,6 +119,9 @@ def generate_plot(occur_dict):
     ax.scatter(min_pos, real_min_height, color='g', s=15, marker='X', label='Minima')
     ax.legend()
     ax.grid()
+    plt.title("K-mer Coverage vs. Count")
+    plt.xlabel("K-mer Coverage")
+    plt.ylabel("Count")
     plt.show()
 
 
