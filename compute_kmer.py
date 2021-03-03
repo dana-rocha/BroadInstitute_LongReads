@@ -34,11 +34,11 @@ def main(infile):
 
     remaining_kmers = find_remaining_kmers(merged_data)
 
-    generate_plot(xvals_array, yvals_array, min_pos, real_min_height, x_thresh, threshold_value, remaining_kmers, kmer_size)
-
     # Show threshold value and remaining number of k-mers on the command line
     print(threshold_value)
     print(remaining_kmers)
+
+    generate_plot(xvals_array, yvals_array, min_pos, real_min_height, x_thresh, threshold_value, remaining_kmers, kmer_size)
 
 
 def check_size(size_input):
@@ -147,7 +147,7 @@ def find_threshold(min_position, mirrored_min_height, occur_pd_sorted):
     merged_df['Exist'] = np.where(merged_df.Exist == 'both', True, False)  # Getting the indices of the minimas
     first_minima_x = int(minimas_df.loc[0][0])
     first_minima_y = int(minimas_df.loc[0][1])
-    threshold_val = "The threshold value (local minimum) is at the point: {}, {}".format(first_minima_x, first_minima_y)
+    threshold_val = "The threshold value (local minimum) is at: ({}, {})".format(first_minima_x, first_minima_y)
 
     return threshold_val, merged_df, first_minima_x
 
@@ -164,7 +164,7 @@ def find_remaining_kmers(df_merged):
     # Calculate how many kmers are above the threshold minima
     instance_index = df_merged.query('Exist == True').index.tolist()
     greater_coverage = len(df_merged) - (int(instance_index[0] + 1))
-    remaining_kmers = "There are {} k-mers that have greater coverage than the threshold value.".format(greater_coverage)
+    remaining_kmers = "There are {} K-mers that have greater coverage than the threshold value.".format(greater_coverage)
 
     return remaining_kmers
 
@@ -184,8 +184,6 @@ def generate_plot(x_values, y_values, minima_x, minima_y, threshold_xvalue, thre
 
     :return: K-Mer Coverage vs. Count graph with threshold value and count of remaining k-mers displayed
     """
-
-
     # Plotting the function
     fig = plt.figure()
     ax = fig.subplots()
@@ -198,7 +196,7 @@ def generate_plot(x_values, y_values, minima_x, minima_y, threshold_xvalue, thre
     ax.scatter(minima_x, minima_y, color='g', s=15, marker='X', label='Minima')
     ax.legend()
     ax.grid()
-    plt.title("K-mer Coverage vs. Count with a K-mer size of {}".format(size_kmer))
+    plt.title("K-mer Coverage vs. Count where K-mer size = {}".format(size_kmer))
     plt.xlabel("K-mer Coverage")
     plt.ylabel("Count")
     plt.subplots_adjust(bottom=0.2)
