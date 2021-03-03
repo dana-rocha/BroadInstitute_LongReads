@@ -18,25 +18,23 @@ def main(infile):
     fh_in = open(infile, "r")
 
     kmer_size = int(input("Please enter a k-mer size (31, 41, 51, 61, 71, 81, 91, or 101): "))
-    checked = check_size(kmer_size)
 
-    #cleaned_seq = clean_seq(fh_in)
+    checked = check_size(kmer_size)
 
     kmers = calc_kmer(fh_in, checked)
 
     kmer_occurs = count_occurrence(kmers)
 
-    #message1, message2 = calculate_minimas(kmer_occurs)
+    xvals_array, yvals_array, min_pos, real_min_height, occur_sorted_df = calculate_minimas(kmer_occurs)
 
-    #print(message1)
-    #print(message2)
+    threshold_value, merged_data, x_thresh = find_threshold(min_pos, real_min_height, occur_sorted_df)
 
-    array_x, array_y, first_min_x_vals, min_x, real_min_y, local_minima_values, kmers_remaining = calculate_minimas(kmer_occurs)
+    remaining_kmers = find_remaining_kmers(merged_data)
 
-    generate_plot(array_x, array_y, first_min_x_vals, min_x, real_min_y, local_minima_values, kmers_remaining)
+    generate_plot(xvals_array, yvals_array, min_pos, real_min_height, x_thresh, threshold_value, remaining_kmers)
 
-    print(local_minima_values)
-    print(kmers_remaining)
+    print(threshold_value)
+    print(remaining_kmers)
 
 def check_size(size_input):
     """
@@ -55,15 +53,6 @@ def check_size(size_input):
     except ValueError:
         print("Invalid k-mer size entered.")
         sys.exit(1)
-
-
-def clean_seq(handle_in):
-    seq_list = []
-
-    for line in handle_in:
-        seq_list.append(line.rstrip())
-
-    return seq_list
 
 
 def calc_kmer(list_of_seqs, ksize):
@@ -89,6 +78,7 @@ def count_occurrence(kmer_container):
 
     return occur
 
+
 def calculate_minimas(occurrence_dict_in):
 
     occur_df = pd.DataFrame(list(occurrence_dict_in.items()), columns=['Coverage', 'Count'])
@@ -98,38 +88,43 @@ def calculate_minimas(occurrence_dict_in):
     x_array = occur_sorted_df["Coverage"].to_numpy()
     y_array = occur_sorted_df["Count"].to_numpy()
 
-    # Find the peaks (maximas)
-    peaks = find_peaks(y_array, height=2, threshold=2, distance=1)
-    height = peaks[1]['peak_heights']  # List containing the height of the peaks
-    peak_pos = x_array[peaks[0]]  # List containing the positions of the peaks
-
     # Find the minimas
-    y2 = y_array * -1 # Mirror the y values over the horizontal axis because the find_peaks module only finds local maximas
+    y2 = y_array * -1  # Mirror the y values over the horizontal axis because the find_peaks only finds local maximas
     minima = find_peaks(y2)
     min_pos = x_array[minima[0]]  # List containing the positions of the minima
     min_height = y2[minima[0]]  # List containing the height of the mirrored minima
     real_min_height = min_height * -1  # Need to flip back over the horizontal axis to plot
 
+    return x_array, y_array, min_pos, real_min_height, occur_sorted_df
+
+
+def find_threshold(min_position, mirrored_min_height, occur_pd_sorted):
+
     # X and Y Values of the minima in a separate dataframe
-    minimas_df = pd.DataFrame({'Coverage': min_pos, 'Count': real_min_height})
+    minimas_df = pd.DataFrame({'Coverage': min_position, 'Count': mirrored_min_height})
 
     # Finding first minima in main dataframe
     # Merge to find the indices of the minimas in the occur_df
-    merged_df = pd.merge(occur_sorted_df, minimas_df, on=['Coverage', 'Count'], how='left', indicator='Exist')
+    merged_df = pd.merge(occur_pd_sorted, minimas_df, on=['Coverage', 'Count'], how='left', indicator='Exist')
     merged_df['Exist'] = np.where(merged_df.Exist == 'both', True, False)  # Getting the indices of the minimas
     first_minima_x = int(minimas_df.loc[0][0])
     first_minima_y = int(minimas_df.loc[0][1])
-    local_min = "The threshold value (local minimum) is at the point: {}, {}".format(first_minima_x, first_minima_y)
+    threshold_val = "The threshold value (local minimum) is at the point: {}, {}".format(first_minima_x, first_minima_y)
+
+    return threshold_val, merged_df, first_minima_x
+
+
+def find_remaining_kmers(df_merged):
 
     # Calculate how many kmers are above the threshold minima
-    instance_index = merged_df.query('Exist == True').index.tolist()
-    greater_coverage = len(merged_df) - (int(instance_index[0] + 1))
-    remaining = "There are {} k-mers that have greater coverage than the threshold value.".format(greater_coverage)
+    instance_index = df_merged.query('Exist == True').index.tolist()
+    greater_coverage = len(df_merged) - (int(instance_index[0] + 1))
+    remaining_kmers = "There are {} k-mers that have greater coverage than the threshold value.".format(greater_coverage)
 
-    return x_array, y_array, first_minima_x, min_pos, real_min_height, local_min, remaining
+    return remaining_kmers
 
 
-def generate_plot(x_values, y_values, first_min_x, minima_x, minima_y, local_minima, remaining_kmers):
+def generate_plot(x_values, y_values, minima_x, minima_y, threshold_xvalue, threshold_message, kmers_remains):
 
     # Plotting the function
     fig = plt.figure()
@@ -137,10 +132,7 @@ def generate_plot(x_values, y_values, first_min_x, minima_x, minima_y, local_min
     ax.plot(x_values, y_values)
 
     # Plotting the threshold
-    ax.axvline(x=first_min_x, color='r', label='Threshold', linestyle='--')
-
-    # Plotting the local maximas
-    # ax.scatter(peak_pos, height, color='r', s=15, marker='D', label='Maxima')
+    ax.axvline(x=threshold_xvalue, color='r', label='Threshold', linestyle='--')
 
     # Plotting the local minimas
     ax.scatter(minima_x, minima_y, color='g', s=15, marker='X', label='Minima')
@@ -150,8 +142,8 @@ def generate_plot(x_values, y_values, first_min_x, minima_x, minima_y, local_min
     plt.xlabel("K-mer Coverage")
     plt.ylabel("Count")
     plt.subplots_adjust(bottom=0.2)
-    plt.figtext(0.5, 0.01, local_minima, ha='center', fontsize=12)
-    plt.figtext(0.5, 0.05, remaining_kmers, ha='center', fontsize=12)
+    plt.figtext(0.5, 0.01, threshold_message, ha='center', fontsize=12)
+    plt.figtext(0.5, 0.05, kmers_remains, ha='center', fontsize=12)
     plt.show()
 
 
@@ -168,7 +160,6 @@ def get_fh(file_in, r_w_mode):
                 fhandle_open = gzip.GzipFile(fileobj=gzipped_f)
 
         else:
-            #fhandle_open = open(file_in, r_w_mode)
             with open(file_in, r_w_mode) as fh:
                 fhandle_open = fh.read().rstrip()
         return fhandle_open
