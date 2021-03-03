@@ -6,6 +6,7 @@ Created by Dana Rocha 2/24/21
 
 import sys
 import argparse
+import os
 import gzip
 from collections import Counter
 import matplotlib.pyplot as plt
@@ -148,13 +149,8 @@ def get_fh(file_in, r_w_mode):
     :return: File handle name
     """
     try:
-        if file_in.endswith('.gz'):
-            with gzip.open(file_in, 'rb') as gzipped_f:
-                fhandle_open = gzip.GzipFile(fileobj=gzipped_f)
-
-        else:
-            with open(file_in, r_w_mode) as fh:
-                fhandle_open = fh.read().rstrip()
+        with open(file_in, r_w_mode) as fh:
+            fhandle_open = fh.read().rstrip()
         return fhandle_open
 
     except IOError:
