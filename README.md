@@ -1,5 +1,8 @@
 # broadinstitute-long-reads
-## Dana Rocha 2/28/21
+## Dana Rocha 
+
+First created: 2/28/21 
+Last updated: 3/17/21
 
 compute_kmer.py addresses the 4 criteria outlined in the ACS Take-home question: 
   1. Allows a user to choose k-mer sizes of 31, 41, 51, 61, 71, 81, 91, 101
@@ -7,7 +10,7 @@ compute_kmer.py addresses the 4 criteria outlined in the ACS Take-home question:
   3. Determines where the local minimum between the first and second peak is 
   4. Displays the number of k-mers that have coverage greater than the local minimum value 
   
-I used Python 3.7 and the PyCharm IDE to write this. 
+I used Python 3.7 and the PyCharm IDE to write this program. 
 
 
 
