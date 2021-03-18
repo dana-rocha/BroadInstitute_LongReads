@@ -16,11 +16,11 @@ I used Python 3.7 and the PyCharm IDE to write this program.
 
 compute_kmer.py should be executed on the command line with the following commands:
 
-> python3 compute_kmer.py -i reads.txt
+> python3 compute_kmer.py -i reads.fixed.txt
 
 or 
 
-> python3 compute_kmer.py --infile reads.txt
+> python3 compute_kmer.py --infile reads.fixed.txt
 
 
 
@@ -29,6 +29,6 @@ This program assumes a regular text file as the input - not a gzip-compressed te
 
 The user will be prompted to enter a K-mer size. 
 The program will output a figure that plots K-mer Coverage vs. Count. 
-The graph will display where the threshold value is with a dashed red line. 
+The graph will indicate where the threshold value is with a dashed red line. 
 
 The threshold value and number of k-mers with coverage greater than the threshold is shown on the graph and command line. 
