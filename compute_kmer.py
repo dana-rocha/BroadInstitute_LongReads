@@ -1,11 +1,11 @@
 #! /usr/bin/env python3
 
 """
-Broad Institute
+Broad Institute - Long Reads Group Take-Home Question
 Created by Dana Rocha 2/24/21
 
-Example of running on the command line: python3 compute_kmers.py -i reads.txt
-Can also run as: python3 compute_kmers.py --infile reads.txt
+Example of running on the command line: python3 compute_kmers.py -i reads.fixed.txt
+Can also run as: python3 compute_kmers.py --infile reads.fixed.txt
 """
 
 import sys
@@ -108,7 +108,7 @@ def calculate_minimas(occurrence_dict_in):
     occur_sorted_df = Pandas DataFrame of sorted data points
     """
 
-    # Converting diciontary to Pandas Dataframe
+    # Converting dictionary to Pandas Dataframe
     occur_df = pd.DataFrame(list(occurrence_dict_in.items()), columns=['Coverage', 'Count'])
     occur_sorted_df = occur_df.sort_values('Coverage', ascending=True)
 
@@ -145,8 +145,8 @@ def find_threshold(min_position, mirrored_min_height, occur_pd_sorted):
     # Merge to find the indices of the minimas in occur_pd_sorted
     merged_df = pd.merge(occur_pd_sorted, minimas_df, on=['Coverage', 'Count'], how='left', indicator='Exist')
     merged_df['Exist'] = np.where(merged_df.Exist == 'both', True, False)  # Getting the indices of the minimas
-    first_minima_x = int(minimas_df.loc[0][0])
-    first_minima_y = int(minimas_df.loc[0][1])
+    first_minima_x = int(minimas_df.loc[1][0])
+    first_minima_y = int(minimas_df.loc[1][1])
     threshold_val = "The threshold value (local minimum) is at: ({}, {})".format(first_minima_x, first_minima_y)
 
     return threshold_val, merged_df, first_minima_x

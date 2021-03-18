@@ -8,6 +8,7 @@
 *.xml
 
 
+/OldFigures
 test_test.py
 test_plot.py
 calc_kmer.py
