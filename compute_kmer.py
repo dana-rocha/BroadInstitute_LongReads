@@ -145,8 +145,8 @@ def find_threshold(min_position, mirrored_min_height, occur_pd_sorted):
     # Merge to find the indices of the minimas in occur_pd_sorted
     merged_df = pd.merge(occur_pd_sorted, minimas_df, on=['Coverage', 'Count'], how='left', indicator='Exist')
     merged_df['Exist'] = np.where(merged_df.Exist == 'both', True, False)  # Getting the indices of the minimas
-    first_minima_x = int(minimas_df.loc[1][0])
-    first_minima_y = int(minimas_df.loc[1][1])
+    first_minima_x = int(minimas_df.loc[0][0])
+    first_minima_y = int(minimas_df.loc[0][1])
     threshold_val = "The threshold value (local minimum) is at: ({}, {})".format(first_minima_x, first_minima_y)
 
     return threshold_val, merged_df, first_minima_x
@@ -203,25 +203,6 @@ def generate_plot(x_values, y_values, minima_x, minima_y, threshold_xvalue, thre
     plt.figtext(0.5, 0.01, threshold_message, ha='center', fontsize=12)
     plt.figtext(0.5, 0.05, kmers_remains, ha='center', fontsize=12)
     plt.show()
-
-def get_fh(file_in, r_w_mode):
-    """
-    This function opens files, removes any trailing newline characters, and returns a file handle name.
-
-    :param file_in: File to be parsed
-    :param r_w_mode: Read or write mode
-
-    :return: File handle name
-    """
-    try:
-        with open(file_in, r_w_mode) as fh:
-            fhandle_open = fh.read().rstrip()
-        return fhandle_open
-    except IOError:
-        print("Cannot open the file: ", file_in)
-        sys.exit(1)
-    except ValueError:
-        print("Invalid mode entered!")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Calculate and plot k-mer occurrences.")
