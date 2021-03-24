@@ -2,7 +2,7 @@
 ## Dana Rocha 
 
 First created: 2/28/21 
-Last updated: 3/17/21
+Last updated: 3/23/21
 
 compute_kmer.py addresses the 4 criteria outlined in the ACS Take-home question: 
   1. Allows a user to choose k-mer sizes of 31, 41, 51, 61, 71, 81, 91, 101
