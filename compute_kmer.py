@@ -3,6 +3,7 @@
 """
 Broad Institute - Long Reads Group Take-Home Question
 Created by Dana Rocha 2/24/21
+Last updated: 3/23/21
 
 Example of running on the command line: python3 compute_kmers.py -i reads.fixed.txt
 Can also run as: python3 compute_kmers.py --infile reads.fixed.txt
